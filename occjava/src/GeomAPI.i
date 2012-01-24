@@ -35,6 +35,33 @@ class GeomAPI_Interpolate  {
  const Handle_Geom_BSplineCurve& Curve() const;
 };
 
+/*
+ * @auther: Fanzhong Meng
+ * wrapper class GeomAPI_ProjectPointOnCurve
+ */
+%{#include <GeomAPI_ProjectPointOnCurve.hxx>%}
+
+class GeomAPI_ProjectPointOnCurve {
+   public:
+      %rename(init) Init;
+      %rename(nbPoints) NbPoints;
+      %rename(lowerDistance) LowerDistance;
+      %rename(distance) Distance;
+      %rename(point) Point;
+      %rename(perform) Perform;
+      %rename(nearestPoint) NearestPoint;
+
+      GeomAPI_ProjectPointOnCurve();
+      GeomAPI_ProjectPointOnCurve(const gp_Pnt& P,const Handle_Geom_Curve& Curve);
+      void Init(const gp_Pnt& P,const Handle_Geom_Curve& Curve) ;
+      void Perform(const gp_Pnt& P) ;
+      Standard_Integer NbPoints() const;
+      gp_Pnt Point(const Standard_Integer Index) const;
+      Quantity_Length LowerDistance() const;
+      Quantity_Length Distance(const Standard_Integer Index) const;
+      gp_Pnt NearestPoint() const;
+};
+
 //%{#include <TColgp_HArray1OfPnt.hxx>%}
 //%rename(TColgp_HArray1OfPnt) Handle_TColgp_HArray1OfPnt;
 /* 

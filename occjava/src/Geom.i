@@ -26,6 +26,7 @@
 #include <Geom2d_Geometry.hxx>
 #include <Geom_BoundedCurve.hxx>
 #include <Geom_BSplineCurve.hxx>
+#include <Handle_Geom_BSplineCurve.hxx>
 #include <Geom_TrimmedCurve.hxx>
 %}
 
@@ -44,7 +45,7 @@ class Handle_Geom_Geometry
 
 class Handle_Geom_Curve: public Handle_Geom_Geometry
 {
-	Handle_Geom_Curve()=0;	
+	Handle_Geom_Curve()=0;
 };
 
 %extend Handle_Geom_Curve
@@ -147,10 +148,17 @@ class Handle_Geom_BSplineCurve : public Handle_Geom_BoundedCurve {
 	Handle_Geom_BSplineCurve()=0;
 };
 
+
 %extend Handle_Geom_BSplineCurve
 {
 //  void movePointAndTangent(const Standard_Real U,const gp_Pnt& P,const gp_Vec& Tangent,const Standard_Real Tolerance,const Standard_Integer StartingCondition,const Standard_Integer EndingCondition,Standard_Integer& *OUTPUT);
-  
+
+  /*
+   * Wrap the constructor of class
+   */
+     
+    Handle_Geom_BSplineCurve(const TColgp_Array1OfPnt& Poles, const TColStd_Array1OfReal& Weights, const TColStd_Array1OfReal& Knots, const TColStd_Array1OfInteger& Multiplicities, const Standard_Integer Degree, const Standard_Boolean Periodic = Standard_False, const Standard_Boolean CheckRational = Standard_True):self( new Geom_BSplineCurve(Poles,Weights,Knots,Multiplicities,Degree,Periodic,CheckRational)){} 
+
   void setKnot(const Standard_Integer Index,const Standard_Real K)
   {
     (*self)->SetKnot(Index,K);
@@ -227,6 +235,10 @@ class Handle_Geom_BSplineCurve : public Handle_Geom_BoundedCurve {
     return (*self)->Degree();
   }
   
+  void d0(const Standard_Real U, gp_Pnt &P) const 
+  {
+    (*self)->D0(U,P);
+  }
   /*
   gp_Vec dN(const Standard_Real U,const Standard_Integer N) const
   {
@@ -238,7 +250,18 @@ class Handle_Geom_BSplineCurve : public Handle_Geom_BoundedCurve {
   {
     return (*self)->LocalValue(U,FromK1,ToK2);
   }
-  
+  /* @author: Fanzhong Meng*/
+  Standard_Integer multiplicity(const Standard_Integer Index) const
+  {
+    return (*self)->Multiplicity(Index);
+  }
+
+  /* @author: Fanzhong Meng*/
+  void multiplicities(TColStd_Array1OfInteger& M) const
+  {
+     (*self)->Multiplicities(M);
+  } 
+
   gp_Pnt endPoint() const
   {
     return (*self)->EndPoint();
@@ -264,11 +287,42 @@ class Handle_Geom_BSplineCurve : public Handle_Geom_BoundedCurve {
     return (*self)->Pole(Index);
   }
   
+  /* @author: Fanzhong Meng*/
+  
+  void poles(TColgp_Array1OfPnt& P) const
+  {
+    (*self)->Poles(P);
+  } 
+
+  /* @author: Fanzhong Meng*/
+  Standard_Real knot(const Standard_Integer Index) const
+  {
+    return (*self)->Knot(Index);
+  }
+
+  /* @author: Fanzhong Meng*/
+  
+  void knots(TColStd_Array1OfReal& K) const
+  {
+    (*self)->Knots(K);
+  }
+
+  /* @author: Fanzhong Meng*/
+  void knotSequence (TColStd_Array1OfReal &K) const
+  {
+    (*self)->KnotSequence(K);
+  }
+
   Standard_Real weight(const Standard_Integer Index) const
   {
     return (*self)->Weight(Index);
   }
-  
+
+  /* @author: Fanzhong Meng*/
+  void setWeight(const Standard_Integer Index,const Standard_Real Weight)
+  {
+    (*self)->SetWeight(Index,Weight);
+  }
 }
 
 class Handle_Geom_TrimmedCurve : public Handle_Geom_BoundedCurve {
